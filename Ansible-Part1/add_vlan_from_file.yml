@@ -4,4 +4,5 @@
     tasks:
       - name: test
         arista.eos.eos_config:
-          src: vlan_config.cfg   
+          src: vlan_config.cfg 
+          #src: del_vlan_config.cfg  
