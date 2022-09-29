@@ -1,0 +1,12 @@
+---
+- hosts: leaf1-DC1
+  gather_facts: no
+  tasks:
+  - name: Register variables
+    include_vars:
+      file: "{{lookup('env','PWD')}}/vars/underlay-DC1.yml"
+      name: underlay
+
+  - name: Test variables
+    ansible.builtin.debug:
+      msg: "{{ underlay }}"
