@@ -2,12 +2,20 @@
 - hosts: all
   gather_facts: no
   tasks:
-  - name: Create MLAG templates
+  - name: Create Odd MLAG templates
     when: 
       - inventory_hostname in groups['leaf_odds']
     template:
       src: "{{lookup('env','PWD')}}/templates/mlag-odd.j2"
       dest: "{{lookup('env','PWD')}}/configs/mlag_configs/{{inventory_hostname}}_mlag.cfg"
+   
+  - name: Create Even MLAG templates
+    when: 
+      - inventory_hostname in groups['leaf_evens']
+    template:
+      src: "{{lookup('env','PWD')}}/templates/mlag-even.j2"
+      dest: "{{lookup('env','PWD')}}/configs/mlag_configs/{{inventory_hostname}}_mlag.cfg"
+
 #  - name: upload configs
 #    arista.eos.eos_config:
 #      src: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}_vlans.cfg"
