@@ -3,9 +3,10 @@
   gather_facts: no
   tasks:
   - name: Create MLAG templates
-    when: inventory_hostname in group['leaf_odds']
+    when: 
+      - inventory_hostname in groups['leaf_odds']
     template:
-      src: "{{lookup('env','PWD')}}/templates/mlag_odd.j2"
+      src: "{{lookup('env','PWD')}}/templates/mlag-odd.j2"
       dest: "{{lookup('env','PWD')}}/configs/mlag_configs/{{inventory_hostname}}_mlag.cfg"
 #  - name: upload configs
 #    arista.eos.eos_config:
