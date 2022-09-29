@@ -1,0 +1,11 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Create MLAG templates
+    template:
+      src: "{{lookup('env','PWD')}}/templates/mlag.j2"
+      dest: "{{lookup('env','PWD')}}/configs/mlag_configs/{{inventory_hostname}}_mlag.cfg"
+#  - name: upload configs
+#    arista.eos.eos_config:
+#      src: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}_vlans.cfg"
