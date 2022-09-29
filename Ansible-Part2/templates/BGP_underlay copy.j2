@@ -1,0 +1,106 @@
+!!!! BASECONFIG !!!!!!
+!
+service routing protocols model multi-agent
+!
+ip prefix-list LOOPBACK
+  permit 192.168.101.0 255.255.255.0 le 32
+  permit 192.168.102.0 255.255.255.0 le 32
+  permit 192.168.201.0 255.255.255.0 le 32
+  permit 192.168.202.0 255.255.255.0 le 32
+!
+route-map LOOPBACK permit 10
+match ip address prefix-list LOOPBACK
+!
+!
+!!!!!!!Interface Configs !!!!!!!!!
+!
+{% for item in underlay[inventory_hostname]['interfaces'] %}
+interface {{ item }}
+  ip address {{ underlay[inventory_hostname]['interfaces'][item]['ipv4']}}/{{ underlay[inventory_hostname]['interfaces'][item]['mask']}}
+{% if 'Ethernet' in item %}
+  no switchport
+  mtu {{ underlay[inventory_hostname]['interfaces'][item]['mtu']}}
+{% endif %}
+!
+{% endfor %}
+!
+!!!!! BGP CONFIGS !!!!!!
+router bgp {{ underlay[inventory_hostname]['BGP']['ASN'] }}
+  router-id {{ underlay[inventory_hostname]['interfaces']['loopback0']['ipv4']}}
+  no bgp default ipv4-unicast
+  maximum-path 3
+  distance bgp 20 200 200
+
+  {# add DCI peer for borderleaf #}
+  {% if 'border' in underlay[inventory_hostname] %}
+  neighbor DCI_Peer peer group
+  neighbor DCI_Peer remote-as 65000
+  neighbor DCI_Peer next-hop-self
+  neighbor DCI_Peer maximum-routes 12000
+  {% endif %}
+  
+  {# add Leaf_peer to any leaf/borderleaf switch#}
+  {% if 'leaf' in underlay[inventory_hostname] %}
+  neighbor LEAF_Peer peer group
+  neighbor LEAF_Peer remote-as {{ underlay[inventory_hostname]['BGP']['ASN'] }}
+  neighbor LEAF_Peer next-hop-self
+  neighbor LEAF_Peer maximum-routes 12000
+    {# sets SPINE_underlay for DC1 #}
+  {% if 'DC1' in underlay[inventory_hostname] %}
+    neighbor SPINE_Underlay peer group
+    neighbor SPINE_Underlay remote-as 65100
+    neighbor SPINE_Underlay send-community
+    neighbor SPINE_Underlay maximum-routes 12000
+  {% endif %}  
+  {# sets SPINE_underlay for DC2 #}
+  {% if 'DC2' in underlay[inventory_hostname] %}
+    neighbor SPINE_Underlay peer group
+    neighbor SPINE_Underlay remote-as 65200
+    neighbor SPINE_Underlay send-community
+    neighbor SPINE_Underlay maximum-routes 12000
+  {% endif %}
+{% endif %}
+
+{# add LEAF_Underlay for Spine switches #}
+{% if 'border' in underlay[inventory_hostname] %}
+  bgp listen range 192.168.0.0/16 peer-group LEAF_Underlay peer-filter LEAF-AS-RANGE
+  neighbor LEAF_Underlay peer group
+  neighbor LEAF_Underlay send-community
+  neighbor LEAF_Underlay maximum-routes 12000
+{% endif %}
+
+{# adds neighbors #}
+ {% for peer in underlay[inventory_hostname]['BGP']['BGP-Peers'] %}
+   {# Neighbor adds for Leaf switches #}
+   {% if 'leaf' in underlay[inventory_hostname] %}  
+   {# if ASNs match, set peer at Leaf Peer #}
+     {% if underlay[inventory_hostname]['BGP']['BGP-Peers'][peer]['Peer_ASN'] == underlay[inventory_hostname]['BGP']['ASN'] %}
+       neighbor {{ peer }} peer group LEAF_Peer
+     {# if ASN is 65000 set as DCI peer#}
+     {% elif underlay[inventory_hostname]['BGP']['BGP-Peers'][peer]['Peer_ASN'] == "65000" %}
+       neighbor {{ peer }} peer group DCI_Peer
+    {# sets everything a neighbor as Spine and add remote AS #}
+     {% else %}
+       neighbor {{ peer }} peer group SPINE_Underlay
+       neighbor {{ peer }} remote-as {{ underlay[inventory_hostname]['BGP']['BGP-Peers'][peer]['Peer_ASN'] }}
+     {% endif %}
+   {% endif %}
+   {# Neighbor adds for Leaf switches #}
+  {% if 'spine' in underlay[inventory_hostname] %}  
+    neighbor {{ peer }} peer group LEAF_Underlay
+    neighbor {{ peer }} remote-as {{ underlay[inventory_hostname]['BGP']['BGP-Peers'][peer]['Peer_ASN'] }}
+  {% endif %}
+ {% endfor %}
+ redistribute connected route-map LOOPBACK
+ !
+ address-falily ipv4
+ {% if 'border' in underlay[inventory_hostname] %}
+   neighbor DCI_Peer activate
+ {% endif %}
+ {% if 'leaf' in underlay[inventory_hostname] %}
+   neighbor LEAF_Peer activate
+   neighbor SPINE_Underlay activate
+ {% endif %}
+ {% if 'spine' in underlay[inventory_hostname] %}
+ neighbor LEAF_Underlay activate
+ {% endif %}

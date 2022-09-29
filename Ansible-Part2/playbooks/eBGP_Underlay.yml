@@ -1,0 +1,17 @@
+---
+- hosts: leaf1-DC1
+  gather_facts: no
+  tasks:
+  - name: Register variables
+    include_vars:
+      file: "{{lookup('env','PWD')}}/vars/eBGP-configs.yml"
+      name: underlay
+
+#  - name: Test variables
+#    ansible.builtin.debug:
+#      msg: "{{ underlay['leaf1-DC1']['interfaces']['Ethernet3']['ipv4'] }}"
+  
+  - name: Create eBGP configs for switches
+    template:
+      src: "{{lookup('env','PWD')}}/templates/BGP_underlay.j2"
+      dest: "{{lookup('env','PWD')}}/configs/eBGP_underlay/{{inventory_hostname}}_interface.cfg"
