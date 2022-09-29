@@ -8,4 +8,4 @@
       dest: "{{lookup('env','PWD')}}/configs/vlans.cfg"
   -name: upload configs
     arista.eos.eos_config:
-      src: "{{lookup('evn',PWD)}}/configs/vlans.cfg"
+      src: "{{lookup('env','PWD')}}/configs/vlans.cfg"
