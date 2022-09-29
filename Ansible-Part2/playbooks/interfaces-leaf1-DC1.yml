@@ -7,9 +7,9 @@
       file: "{{lookup('env','PWD')}}/vars/underlay-DC1.yml"
       name: underlay
 
-  - name: Test variables
-    ansible.builtin.debug:
-      msg: "{{ underlay['leaf1-DC1']['interfaces']['Ethernet3']['ipv4'] }}"
+#  - name: Test variables
+#    ansible.builtin.debug:
+#      msg: "{{ underlay['leaf1-DC1']['interfaces']['Ethernet3']['ipv4'] }}"
   
   - name: Create a configuration for Ethernet3
     template:
