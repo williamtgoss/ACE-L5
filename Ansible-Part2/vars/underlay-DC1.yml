@@ -1,0 +1,17 @@
+leaf1-DC1:
+  interfaces:
+    loopback0: 
+      ipv4: 192.168.101.11
+      mask: 32
+    loopback1: 
+      ipv4: 192.168.102.11
+      mask: 32
+    Ethernet3:
+      ipv4: 192.168.103.0
+      mask: 31
+    Ethernet4: 
+      ipv4: 192.168.103.2
+      mask: 31
+    Ethernet5: 
+      ipv4: 192.168.103.4
+      mask: 31

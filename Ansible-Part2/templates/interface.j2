@@ -1,0 +1,3 @@
+interface Ethernet3
+  ip address {{ underlay[inventory_hostname]['interfaces']['Ethernet3']['ipv4']}}/{{ underlay[inventory_hostname]['interfaces']['Ethernet3']['mask']}}
+  no switchport
