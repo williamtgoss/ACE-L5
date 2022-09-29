@@ -1,0 +1,12 @@
+---
+  - hosts: leaf1-DC1
+    gather_facts: no
+    tasks:
+      - name: Add VLAN via CLI
+        eos_config:
+          lines:
+            - vlan {{ item }}
+        loop:
+          - 4001
+          - 4002
+          - 4003

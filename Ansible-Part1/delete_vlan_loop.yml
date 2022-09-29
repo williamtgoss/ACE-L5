@@ -2,12 +2,12 @@
   - hosts: all
     gather_facts: no
     tasks:
-    - name: Add VLANs via looping
+    - name: deleting VLANs via looping
       eos_vlans:
         config:
         - vlan_id: "{{ item }}"
           state: active
-        state: merged
+        state: deleted
       loop:
         - 4000
         - 4001
