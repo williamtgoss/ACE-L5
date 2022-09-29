@@ -146,7 +146,7 @@ leaf4-DC1:
         Peer4: 
           IP: 192.168.255.1
           Peer_ASN: 65102
-boarderleaf1-DC1:
+borderleaf1-DC1:
     interfaces:
         loopback0:
             ipv4: 192.168.101.21
@@ -190,7 +190,7 @@ boarderleaf1-DC1:
         Peer5: 
           IP: 192.168.255.2
           Peer_ASN: 65103
-boarderleaf2-DC1:
+borderleaf2-DC1:
     interfaces:
         loopback0:
             ipv4: 192.168.101.22
@@ -535,7 +535,7 @@ leaf4-DC2:
         Peer4: 
           IP: 192.168.255.1
           Peer_ASN: 65202
-boarderleaf1-DC2:
+borderleaf1-DC2:
     interfaces:
         loopback0:
             ipv4: 192.168.201.21
@@ -579,7 +579,7 @@ boarderleaf1-DC2:
         Peer5: 
           IP: 192.168.255.2
           Peer_ASN: 65203
-boarderleaf2-DC2:
+borderleaf2-DC2:
     interfaces:
         loopback0:
             ipv4: 192.168.201.22
