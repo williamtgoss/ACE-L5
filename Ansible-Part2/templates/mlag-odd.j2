@@ -1,0 +1,28 @@
+{# This creates the VLAN database entries #}
+vlan 4094
+   name MLAG
+   trunk group MLAGPEER 
+!
+{# This removed spaning-tree for VLAN #}
+no spanning-tree vlan-id 4094
+!
+{# This creates the SVIs #}
+interface vlan 4094
+   description MLAG-SVIs
+   ip address 192.168.255.1/30
+!
+{# This configures PO and Interfaces #}
+interface Port-Channel10
+   description MLAG PEER LINK - LEAF
+   switchport mode trunk
+   switchport trunk group MLAGPEER
+!
+interface Ethernet1
+   description MLAG PEER LINK - LEAF
+   switchport mode trunk
+   channel-group 10 mode active
+!
+interface Ethernet2
+   description MLAG PEER LINK -- LEAF
+   switchport mode trunk
+   channel-group 10 mode active
