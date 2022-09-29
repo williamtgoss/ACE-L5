@@ -6,6 +6,6 @@
     template:
       src: "{{lookup('env','PWD')}}/templates/vlans.j2"
       dest: "{{lookup('env','PWD')}}/configs/vlans.cfg"
-  -name: upload configs
+  -name: upload configs:
     arista.eos.eos_config:
       src: "{{lookup('env','PWD')}}/configs/vlans.cfg"
