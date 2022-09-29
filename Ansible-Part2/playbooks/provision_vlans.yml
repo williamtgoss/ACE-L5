@@ -5,7 +5,7 @@
   - name: Create template
     template:
       src: "{{lookup('env','PWD')}}/templates/vlans.j2"
-      dest: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}_vlans.cfg"
+      dest: "{{lookup('env','PWD')}}/configs/vlans/{{inventory_hostname}}_vlans.cfg"
   - name: upload configs
     arista.eos.eos_config:
-      src: "{{lookup('env','PWD')}}/configs/{{inventory_hostname}}_vlans.cfg"
+      src: "{{lookup('env','PWD')}}/configs/vlans/{{inventory_hostname}}_vlans.cfg"
