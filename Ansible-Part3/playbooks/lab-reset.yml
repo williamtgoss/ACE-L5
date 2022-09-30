@@ -7,7 +7,7 @@
   vars: 
     path: "{{lookup('env','PWD')}}"
   vars_files: 
-     - ../vars/CVP-base.yml
+     - ../vars/CVP_base.yml
    
   tasks:
 
